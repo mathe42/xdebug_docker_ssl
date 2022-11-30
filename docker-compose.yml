@@ -1,0 +1,41 @@
+version: "3"
+
+services: 
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./ssl_certs:/var/lib/https-portal
+    environment:
+      DOMAINS: 
+        sebastian.skrueger.dev -> http://sebastian:80, 
+        db.skrueger.dev -> http://phpmyadmin:80
+      STAGE: 'production' # Don't use production until staging works
+
+  sebastian:
+    build: ./server
+    container_name: sebastian_dev
+    volumes: 
+      - $PWD/htdocs:/var/www/
+    extra_hosts:
+      - host.docker.internal:host-gateway
+  
+  db:
+    image: mariadb:10.10.2
+    restart: always
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+    volumes:
+      - ./db:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.0-fpm-alpine
+    container_name: phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      PMA_HOST: 'database'
