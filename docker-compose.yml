@@ -32,7 +32,7 @@ services:
       - ./db:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.2.0-fpm-alpine
+    image: phpmyadmin/phpmyadmin:5.2.1-fpm-alpine
     container_name: phpmyadmin
     ports:
       - 8080:80
